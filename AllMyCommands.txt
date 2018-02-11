@@ -1,0 +1,149 @@
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git init
+Reinitialized existing Git repository in /home/hazem/Desktop/Hazem/.git/
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ touch "AllMyCommands.txt"
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ list
+No command 'list' found, did you mean:
+ Command 'gist' from package 'yorick' (universe)
+ Command 'flist' from package 'nmh' (universe)
+ Command 'last' from package 'util-linux' (main)
+ Command 'klist' from package 'krb5-user' (universe)
+ Command 'klist' from package 'heimdal-clients' (universe)
+ Command 'dist' from package 'nmh' (universe)
+ Command 'bist' from package 'bist' (universe)
+ Command 'lift' from package 'lift' (universe)
+ Command 'hist' from package 'loki' (universe)
+list: command not found
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ ls
+AllMyCommands.txt  section 1.1.pdf  section 3.1.pdf  section 5.1.pdf
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ ^C
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git add .
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git rm --cached "section 3.1.pdf"
+rm 'section 3.1.pdf'
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git status
+On branch master
+
+Initial commit
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+	new file:   AllMyCommands.txt
+	new file:   section 1.1.pdf
+	new file:   section 5.1.pdf
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	section 3.1.pdf
+
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git reset HEAD
+fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git reset HEAD.
+fatal: ambiguous argument 'HEAD.': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git reset HEAD .
+fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git add "section 3.1.pdf"
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git rm --cached "AllMyCommands.txt"
+rm 'AllMyCommands.txt'
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git status
+On branch master
+
+Initial commit
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+	new file:   section 1.1.pdf
+	new file:   section 3.1.pdf
+	new file:   section 5.1.pdf
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	AllMyCommands.txt
+
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git commit -m "Hazooom"
+[master (root-commit) b656238] Hazooom
+ 3 files changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 section 1.1.pdf
+ create mode 100644 section 3.1.pdf
+ create mode 100644 section 5.1.pdf
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git remote add origin https://github.com/Xsozm/Test.git
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git push -u origin master
+Username for 'https://github.com': Xsozm
+Password for 'https://Xsozm@github.com': 
+remote: Invalid username or password.
+fatal: Authentication failed for 'https://github.com/Xsozm/Test.git/'
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git push -u origin master
+Username for 'https://github.com': Xsozm
+Password for 'https://Xsozm@github.com': 
+Counting objects: 5, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (5/5), done.
+Writing objects:  40% (2/5), 3.05 MiB | 11.00 KiB/s   
+Writing objects: 100% (5/5), 6.88 MiB | 24.00 KiB/s, done.
+Total 5 (delta 2), reused 0 (delta 0)
+remote: Resolving deltas: 100% (2/2), done.
+To https://github.com/Xsozm/Test.git
+ * [new branch]      master -> master
+Branch master set up to track remote branch master from origin.
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ 
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ touch "README.md"
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git checkout -b ReadMe
+Switched to a new branch 'ReadMe'
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ ls
+AllMyCommands.txt  README.md  section 1.1.pdf  section 3.1.pdf  section 5.1.pdf
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git status
+On branch ReadMe
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	AllMyCommands.txt
+	README.md
+
+nothing added to commit but untracked files present (use "git add" to track)
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git add README.md
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git status
+On branch ReadMe
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   README.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	AllMyCommands.txt
+
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git commit -m "Hazooom2"
+[ReadMe 7dcf1c2] Hazooom2
+ 1 file changed, 14 insertions(+)
+ create mode 100644 README.md
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git checkout master
+Switched to branch 'master'
+Your branch is up-to-date with 'origin/master'.
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git merge ReadMe
+Updating b656238..7dcf1c2
+Fast-forward
+ README.md | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 README.md
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ git push -u origin masterUsername for 'https://github.com': Xsozm
+Password for 'https://Xsozm@github.com': 
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 498 bytes | 0 bytes/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://github.com/Xsozm/Test.git
+   b656238..7dcf1c2  master -> master
+Branch master set up to track remote branch master from origin.
+hazem@hazem-Lenovo-Z51-70:~/Desktop/Hazem$ 
+
