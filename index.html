@@ -1,39 +1,231 @@
 <html>
-<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="https://cdn.pubnub.com/pubnub-3.7.14.min.js"></script>
-    <script src="https://cdn.pubnub.com/webrtc/webrtc.js"></script></head>
+<head>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <title></title>
+    <script type="text/javascript" src="https://api.bistri.com/bistri.conference.min.js"></script>
+
+    <script type="text/javascript">
+
+
+        let room;
+        let members;
+        let localStream;
+
+        // when Bistri API client is ready, function
+        // "onBistriConferenceReady" is invoked
+        onBistriConferenceReady = function () {
+
+            // test if the browser is not WebRTC compatible
+            if ( !bc.isCompatible() ) {
+                // if the browser is not compatible, display an alert
+                alert( "your browser is not WebRTC compatible  sorry for this , Try to run the app in browser support RTC !" );
+                // then stop the script execution
+                return;
+            }
+
+            // initialize API client with application keys
+            // if you don't have your own, you can get them at:
+            // https://api.developers.bistri.com/login
+            bc.init( {
+                //Hazem  Account
+                appId: "5b77dc90",
+                appKey: "9bf22aaadc0c74771344a5f070e22496",
+                "debug": true
+            } );
+
+            /* Set events handler */
+
+            // when local user is connected to the server
+            bc.signaling.bind( "onConnected", function () {
+                // show pane with id "pane_1"
+                showPanel( "pane_1" );
+            } );
+
+            // when an error occured on the server side
+            bc.signaling.bind( "onError", function ( error ) {
+                // display an alert message
+                alert( error.text + " (" + error.code + ")" );
+            } );
+
+            // when the user has joined a room
+            bc.signaling.bind( "onJoinedRoom", function ( data ) {
+                // set the current room name
+                room = data.room;
+                members = data.members;
+                // ask the user to access to his webcam
+                bc.startStream( "webcam-sd", function( stream ){
+                    // affect stream to "localStream" var
+                    localStream = stream;
+                    // when webcam access has been granted
+                    // show pane with id "pane_2"
+                    showPanel( "pane_2" );
+                    // insert the local webcam stream into div#video_container node
+                    bc.attachStream( stream, q( "#video_container" ), { mirror: true } );
+                    // then, for every single members present in the room ...
+                    for ( var i=0, max=members.length; i<max; i++ ) {
+                        // ... request a call
+                        bc.call( members[ i ].id, room, { "stream": stream } );
+                    }
+                } );
+            } );
+
+            // when an error occurred while trying to join a room
+            bc.signaling.bind( "onJoinRoomError", function ( error ) {
+                // display an alert message
+                alert( error.text + " (" + error.code + ")" );
+            } );
+
+            // when the local user has quitted the room
+            bc.signaling.bind( "onQuittedRoom", function( room ) {
+                // stop the local stream
+                bc.stopStream( localStream, function(){
+                    // remove the stream from the page
+                    bc.detachStream( localStream );
+                    // show pane with id "pane_1"
+                    showPanel( "pane_1" );
+                } );
+            } );
+
+            // when a new remote stream is received
+            bc.streams.bind( "onStreamAdded", function ( remoteStream ) {
+                // insert the new remote stream into div#video_container node
+                bc.attachStream( remoteStream, q( "#video_container_2" ) );
+            } );
+
+            // when a remote stream has been stopped
+            bc.streams.bind( "onStreamClosed", function ( stream ) {
+                // remove the stream from the page
+                bc.detachStream( stream );
+            } );
+
+            // when a local stream cannot be retrieved
+            bc.streams.bind( "onStreamError", function( error ){
+                switch( error.name ){
+                    case "PermissionDeniedError":
+                        alert( "Webcam access has not been allowed" );
+                        bc.quitRoom( room );
+                        break
+                    case "DevicesNotFoundError":
+                        if( confirm( "No webcam/mic found on this machine. Process call anyway ?" ) ){
+                            // show pane with id "pane_2"
+                            showPanel( "pane_2" );
+                            for ( var i=0, max=members.length; i<max; i++ ) {
+                                // ... request a call
+                                bc.call( members[ i ].id, room );
+                            }
+                        }
+                        else{
+                            bc.quitRoom( room );
+                        }
+                        break
+                }
+            } );
+
+            // bind function "joinConference" to button "Join Conference Room"
+            q( "#join" ).addEventListener( "click", joinConference );
+
+            // bind function "quitConference" to button "Quit Conference Room"
+            q( "#quit" ).addEventListener( "click", quitConference );
+
+            // open a new session on the server
+            bc.connect();
+        }
+
+        // when button "Join Conference Room" has been clicked
+        function joinConference(){
+            var roomToJoin = "vineet";
+            // if "Conference Name" field is not empty ...
+            if( roomToJoin ){
+                // ... join the room
+                bc.joinRoom( roomToJoin );
+            }
+            else{
+                // otherwise, display an alert
+                alert( "you must enter a room name !" )
+            }
+        }
+
+        // when button "Quit Conference Room" has been clicked
+        function quitConference(){
+            // quit the current conference room
+            bc.quitRoom( room );
+        }
+
+        function showPanel( id ){
+            var panes = document.querySelectorAll( ".pane" );
+            // for all nodes matching the query ".pane"
+            for( var i=0, max=panes.length; i<max; i++ ){
+                // hide all nodes except the one to show
+                panes[ i ].style.display = panes[ i ].id == id ? "block" : "none";
+            };
+        }
+
+        function q( query ){
+            // return the DOM node matching the query
+            return document.querySelector( query );
+        }
+    </script>
+    <style type="text/css">
+        #video_container{
+
+            margin: 20px;
+            text-align: center;
+            width:100px;
+            height:50px;
+            position:absolute;
+            top:150px;
+            left: 150px;
+            z-index: 1;
+        }
+        #video_container_2{
+
+            margin: 20px;
+            text-align: center;
+            width:800px;
+            height:800px;
+            position:absolute;
+            top:250px;
+            left: 200px;
+        }
+
+        video {
+            width: 600%;
+        }
+        body{
+            background-color:#E6E6FA;
+        }
+        .container-fluid{
+            background-image: linear-gradient(90deg, #4b6cb7, #182848);
+        }
+
+
+    </style>
+</head>
 <body>
-<div id="vid-box"></div>
+<div class="container-fluid" style="height:100px ">
+    <div>
+        <h1 class="col-sm-12 col-lg-9" style="top:25%"><strong><em>RANDOM</strong></em></h1>
+    </div>
+    <div class="col-sm-12 col-lg-3" style="position:relative; top:25%; right:5%;">
 
-<form name="loginForm" id="login" action="#" onsubmit="return login(this);">
-    <input type="text" name="username" id="username" placeholder="Pick a username!" />
-    <input type="submit" name="login_submit" value="Log In">
-</form>
+        <button id="profile" type="button" style=" float:right; display:block;" class="btn btn-lg btn-success">Profile</button>
 
-<form name="callForm" id="call" action="#" onsubmit="return makeCall(this);">
-	<input type="text" name="number" placeholder="Enter user to dial!" />
-	<input type="submit" value="Call"/>
-</form>
-<script>
-    var video_out = document.getElementById("vid-box");
-    function login(form) {
-        var phone = window.phone = PHONE({
-            number        : form.username.value || "Anonymous", // listen on username line else Anonymous
-            publish_key   : 'pub-c-16bb985e-9e01-4bbe-a999-8973f0623d6a',
-            subscribe_key : 'sub-c-6d4dddd8-4a14-11e8-9dbf-7a2345bba81d',
-        });
-        phone.ready(function(){ form.username.style.background="#55ff5b"; });
-        phone.receive(function(session){
-            session.connected(function(session) { video_out.appendChild(session.video); });
-            session.ended(function(session) { video_out.innerHTML=''; });
-        });
-        return false; 	// So the form does not submit.
-    }
-    function makeCall(form){
-        if (!window.phone) alert("Login First!");
-        else phone.dial(form.number.value);
-        return false;
-    }
-</script>
+        <button type="button" style=" float:right; margin-right:10px " class="btn btn-lg btn-success">Courses</button>
+    </div>
+</div>
+<div class="pane" id="pane_1" style="display: block">
+
+    <br>
+    <input type="button" value="Join Yoga lecture" id="join" class="btn btn-lg btn-success">
+</div>
+
+<div class=" pane" id="pane_2" style="display: none">
+    <div id="video_container"></div>
+    <div id="video_container_2"></div>
+    <input type="button" value="Quit Conference Room" id="quit" class="btn btn-danger btn-default btn-block">
+</div>
 </body>
 </html>
